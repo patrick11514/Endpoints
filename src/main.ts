@@ -6,7 +6,7 @@ type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 type ErrorSchema = {
     status: false
-    error: string
+    error: any
 }
 
 export class Endpoint<T> {
@@ -191,12 +191,26 @@ export class Endpoint<T> {
         if (!data.success) {
             const errorSchema: z.ZodType<ErrorSchema> = z.object({
                 status: z.literal(false),
-                error: z.string(),
+                error: z.string().or(
+                    z.object({
+                        name: z.literal('ZodError'),
+                        issues: z.array(
+                            z.object({
+                                code: z.string(),
+                                exprected: z.string(),
+                                received: z.string(),
+                                path: z.array(z.string()),
+                                message: z.string(),
+                            }),
+                        ),
+                    }),
+                ),
             })
 
             const error = errorSchema.safeParse(json)
 
             if (!error.success) {
+                console.log(error.error.errors)
                 return {
                     status: false,
                     handled: true,

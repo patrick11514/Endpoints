@@ -10,17 +10,12 @@ const main = async () => {
         }),
     })
 
-    const endpoint = new Endpoint(
-        'http://localhost:5173/api/login',
-        'POST',
-        {
-            username: 'patrick115',
-            password: 'pepa1234',
-        },
-        schema,
-    )
+    const endpoint = new Endpoint('http://localhost:5173/api/login', 'POST', schema)
 
-    const result = await endpoint.fetchSafe()
+    const result = await endpoint.fetchSafe({
+        username: '',
+        password: '',
+    })
 
     console.log(result)
 }
