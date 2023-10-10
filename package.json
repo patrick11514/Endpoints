@@ -1,7 +1,7 @@
 {
-    "name": "endpoints",
+    "name": "@patrick115/endpoints",
     "version": "1.0.0",
-    "description": "",
+    "description": "Create and send fetch requests to endpoints using type safety with Zod",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,16 +12,26 @@
         "format": "prettier --write ."
     },
     "keywords": [],
-    "author": "",
+    "author": "Patrik Mintěl",
     "license": "ISC",
     "dependencies": {
-        "node-fetch": "^3.3.2",
+        "form-data": "^4.0.0",
+        "node-fetch": "^2.7.0",
         "zod": "^3.22.4"
     },
     "devDependencies": {
         "@types/node": "^20.8.4",
+        "@types/node-fetch": "^2.6.6",
         "prettier": "^3.0.3",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.2.2"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/patrick11514/Endpoints.git"
+    },
+    "bugs": {
+        "url": "https://github.com/patrick11514/Endpoints/issues"
+    },
+    "homepage": "https://github.com/patrick11514/Endpoints#readme"
 }
