@@ -2,15 +2,17 @@
     "name": "@patrick115/endpoints",
     "version": "1.0.0",
     "description": "Create and send fetch requests to endpoints using type safety with Zod",
-    "main": "index.js",
+    "main": "build/main.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "ts-node-dev --respawn ./src/index.ts",
         "build": "mkdir -p build && tsc",
         "start": "node ./build/index.js",
         "clear": "rm -rf build",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "publish": "pnpm build && npm publish --access public"
     },
+    "types": "index.d.ts",
     "keywords": [],
     "author": "Patrik Mintěl",
     "license": "ISC",

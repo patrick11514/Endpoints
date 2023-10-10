@@ -1,3 +1,4 @@
+import { type HeadersInit } from 'node-fetch'
 import * as z from 'zod'
 
 export type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -8,7 +9,7 @@ export type ErrorSchema = {
 }
 
 export declare class Endpoint<T> {
-    constructor(endpoint: string, method: EndpointMethod)
+    constructor(endpoint: string, method: EndpointMethod, data: any, schema: z.ZodType<T>, headers?: HeadersInit)
     fetch(): Promise<T | ErrorSchema>
     fetchSafe(): Promise<
         | {

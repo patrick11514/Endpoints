@@ -1,2 +1,5 @@
 test/*
 src/*
+.prettierrc
+tsconfig.json
+!build/*
