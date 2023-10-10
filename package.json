@@ -1,6 +1,6 @@
 {
     "name": "@patrick115/endpoints",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Create and send fetch requests to endpoints using type safety with Zod",
     "main": "build/main.js",
     "scripts": {
