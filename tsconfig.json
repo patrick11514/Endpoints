@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "rootDir": "src",
-        "outDir": "build",
+        "outDir": "lib",
         "removeComments": true,
         "target": "ES2022",
         "module": "CommonJS",
@@ -11,6 +11,6 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/main.ts"],
     "exclude": ["node_modules"]
 }
