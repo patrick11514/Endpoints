@@ -16,15 +16,16 @@ export class Endpoint<T> {
     schema: z.ZodType<T>
     headers: HeadersInit | undefined
 
-    constructor(endpoint: string, method: EndpointMethod, data: any, schema: z.ZodType<T>, headers?: HeadersInit) {
+    constructor(endpoint: string, method: EndpointMethod, schema: z.ZodType<T>, headers?: HeadersInit) {
         this.endpoint = endpoint
         this.method = method
-        this.data = data
         this.schema = schema
         this.headers = headers
     }
 
-    async fetch() {
+    async fetch(data: any) {
+        this.data = data
+
         return new Promise<T | ErrorSchema>(async (resolve, reject) => {
             const result = await this.executeFetch()
 
@@ -36,7 +37,7 @@ export class Endpoint<T> {
         })
     }
 
-    async fetchSafe(): Promise<
+    async fetchSafe(data: any): Promise<
         | {
               status: false
               error: z.ZodError<T>
@@ -61,6 +62,7 @@ export class Endpoint<T> {
               data: T
           }
     > {
+        this.data = data
         const request = await this.executeFetch()
 
         if (request.status === false) {
