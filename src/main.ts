@@ -38,7 +38,7 @@ export class Endpoint<T> {
         this.headers = headers
     }
 
-    async fetch(data: any) {
+    async fetch(data?: any) {
         this.data = data
 
         return new Promise<T | ErrorSchema>(async (resolve, reject) => {
@@ -52,7 +52,7 @@ export class Endpoint<T> {
         })
     }
 
-    async fetchSafe(data: any): Promise<
+    async fetchSafe(data?: any): Promise<
         | {
               status: false
               error: z.ZodError<T>
@@ -129,6 +129,8 @@ export class Endpoint<T> {
                 } else {
                     object['body'] = JSON.stringify(this.data)
                 }
+                break
+            case 'undefined':
                 break
             default:
                 throw Error('Undefined data type')
