@@ -55,14 +55,17 @@ export class Endpoint<T> {
     async fetchSafe(data?: any): Promise<
         | {
               status: false
+              errorSchema: false
               error: z.ZodError<T>
           }
         | {
               status: false
+              errorSchema: false
               error: object
           }
         | {
               status: false
+              errorSchema: false
               error: unknown
               errorData: string
           }
@@ -73,7 +76,6 @@ export class Endpoint<T> {
           }
         | {
               status: true
-              errorSchema: false
               data: T
           }
     > {
@@ -84,12 +86,14 @@ export class Endpoint<T> {
             if ('data' in request) {
                 return {
                     status: false,
+                    errorSchema: false,
                     error: request.error,
                     errorData: request.data,
                 }
             } else {
                 return {
                     status: false,
+                    errorSchema: false,
                     error: request.error,
                 }
             }
@@ -103,7 +107,6 @@ export class Endpoint<T> {
             } else {
                 return {
                     status: true,
-                    errorSchema: false,
                     data: request.data,
                 }
             }
