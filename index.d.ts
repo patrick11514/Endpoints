@@ -5,7 +5,7 @@ export type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 export type ErrorSchema = {
     status: false
-    error: string
+    error: string | z.ZodError<any>
 }
 
 export declare class Endpoint<T> {
