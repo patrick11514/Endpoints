@@ -67,7 +67,7 @@ export class Endpoint<T> {
               errorData: string
           }
         | {
-              status: true
+              status: false
               errorSchema: true
               data: ErrorSchema
           }
@@ -96,7 +96,7 @@ export class Endpoint<T> {
         } else {
             if ('handled' in request) {
                 return {
-                    status: true,
+                    status: false,
                     errorSchema: true,
                     data: request.data,
                 }

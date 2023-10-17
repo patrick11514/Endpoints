@@ -26,7 +26,7 @@ export declare class Endpoint<T> {
               errorData: string
           }
         | {
-              status: true
+              status: false
               errorSchema: true
               data: ErrorSchema
           }
