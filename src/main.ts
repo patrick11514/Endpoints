@@ -191,20 +191,23 @@ export class Endpoint<T> {
         if (!data.success) {
             const errorSchema: z.ZodType<ErrorSchema> = z.object({
                 status: z.literal(false),
-                error: z.string().or(
-                    z.object({
-                        name: z.literal('ZodError'),
-                        issues: z.array(
-                            z.object({
-                                code: z.string(),
-                                exprected: z.string(),
-                                received: z.string(),
-                                path: z.array(z.string()),
-                                message: z.string(),
-                            }),
-                        ),
-                    }),
-                ),
+                error: z
+                    .custom<'errorSchema'>((value) => {
+                        if (typeof value === 'undefined') return false
+                        if (typeof value !== 'object') return false
+
+                        if (value === null) return false
+                        if (!('name' in value)) return false
+
+                        if (value.name !== 'ZodError') return false
+
+                        if (!('issues' in value)) return false
+                        if (typeof value.issues !== 'object') return false
+                        if (!Array.isArray(value.issues)) return false
+
+                        return true
+                    })
+                    .or(z.string()),
             })
 
             const error = errorSchema.safeParse(json)
