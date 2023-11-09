@@ -136,7 +136,9 @@ export class Endpoint<T> {
             case 'undefined':
                 break
             default:
-                throw Error('Undefined data type')
+                if (this.data['toString'] !== undefined) {
+                    object['body'] = this.data.toString()
+                }
         }
 
         return object
