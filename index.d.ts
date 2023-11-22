@@ -18,8 +18,8 @@ export declare class Endpoint<T, I, E> {
         inputSchema?: z.ZodType<I>,
         errorSchema?: z.ZodType<E>,
     )
-    fetch(data: I): Promise<T | E | ErrorSchema>
-    fetchSafe(data: I): Promise<
+    fetch(data?: I): Promise<T | E | ErrorSchema>
+    fetchSafe(data?: I): Promise<
         | {
               status: false
               errorSchema: false

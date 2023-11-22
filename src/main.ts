@@ -62,7 +62,7 @@ export class Endpoint<T, I, E> {
         this.headers = headers
     }
 
-    async fetch(data: I): Promise<T | E | ErrorSchema> {
+    async fetch(data?: I): Promise<T | E | ErrorSchema> {
         if (this.inputSchema) {
             const result = this.inputSchema.safeParse(data)
 
@@ -89,7 +89,7 @@ export class Endpoint<T, I, E> {
         })
     }
 
-    async fetchSafe(data: I): Promise<
+    async fetchSafe(data?: I): Promise<
         | {
               status: false
               errorSchema: false
