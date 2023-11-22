@@ -1,13 +1,14 @@
 import { type HeadersInit } from 'node-fetch'
 import * as z from 'zod'
 
-export type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
-export type ErrorSchema = {
+type ErrorSchema = {
     status: false
     error: string | z.ZodError<any>
 }
 
+export declare const defaultErrorSchema: z.ZodType<ErrorSchema>
 export declare class Endpoint<T, I, E> {
     constructor(
         endpoint: string,
@@ -17,8 +18,8 @@ export declare class Endpoint<T, I, E> {
         inputSchema?: z.ZodType<I>,
         errorSchema?: z.ZodType<E>,
     )
-    fetch(data?: any): Promise<T | ErrorSchema>
-    fetchSafe(data?: any): Promise<
+    fetch(data: I): Promise<T | E | ErrorSchema>
+    fetchSafe(data: I): Promise<
         | {
               status: false
               errorSchema: false
@@ -38,7 +39,7 @@ export declare class Endpoint<T, I, E> {
         | {
               status: false
               errorSchema: true
-              data: ErrorSchema
+              data: E
           }
         | {
               status: true

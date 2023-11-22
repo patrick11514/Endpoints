@@ -2,14 +2,14 @@ import FormData from 'form-data'
 import nFetch, { type HeadersInit, type RequestInit } from 'node-fetch'
 import { z } from 'zod'
 
-type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
-
 type ErrorSchema = {
     status: false
     error: string | z.ZodError<any>
 }
 
-export const zodErrorSchema = z.custom<'errorSchema'>((value) => {
+type EndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+const zodErrorSchema = z.custom<'errorSchema'>((value) => {
     if (typeof value === 'undefined') return false
     if (typeof value !== 'object') return false
 
@@ -25,9 +25,9 @@ export const zodErrorSchema = z.custom<'errorSchema'>((value) => {
     return true
 })
 
-const test = z.object({
+export const defaultErrorSchema = z.object({
     status: z.literal(false),
-    message: z.string(),
+    error: zodErrorSchema.or(z.string()),
 })
 
 export class Endpoint<T, I, E> {
@@ -36,26 +36,33 @@ export class Endpoint<T, I, E> {
     data: any
     schema: z.ZodType<T>
     inputSchema: z.ZodType<I> | undefined
-    errorSchema: z.ZodType<E> | typeof zodErrorSchema = zodErrorSchema
+    errorSchema: z.ZodType<E>
     headers: HeadersInit | undefined
 
-    constructor(
-        endpoint: string,
-        method: EndpointMethod,
-        schema: z.ZodType<T>,
-        headers?: HeadersInit,
-        inputSchema?: z.ZodType<I>,
-        errorSchema?: z.ZodType<E>,
-    ) {
+    constructor({
+        endpoint,
+        method,
+        schema,
+        headers,
+        inputSchema,
+        errorSchema,
+    }: {
+        endpoint: string
+        method: EndpointMethod
+        schema: z.ZodType<T>
+        headers?: HeadersInit
+        inputSchema?: z.ZodType<I>
+        errorSchema: z.ZodType<E>
+    }) {
         this.endpoint = endpoint
         this.method = method
         this.schema = schema
         this.inputSchema = inputSchema
-        this.errorSchema = errorSchema ? errorSchema : zodErrorSchema
+        this.errorSchema = errorSchema
         this.headers = headers
     }
 
-    async fetch(data?: I): Promise<T | ErrorSchema> {
+    async fetch(data: I): Promise<T | E | ErrorSchema> {
         if (this.inputSchema) {
             const result = this.inputSchema.safeParse(data)
 
@@ -71,7 +78,7 @@ export class Endpoint<T, I, E> {
             this.data = data
         }
 
-        return new Promise<T | ErrorSchema>(async (resolve, reject) => {
+        return new Promise<T | E>(async (resolve, reject) => {
             const result = await this.executeFetch()
 
             if (result.status === false) {
@@ -82,7 +89,7 @@ export class Endpoint<T, I, E> {
         })
     }
 
-    async fetchSafe(data?: I): Promise<
+    async fetchSafe(data: I): Promise<
         | {
               status: false
               errorSchema: false
@@ -102,7 +109,7 @@ export class Endpoint<T, I, E> {
         | {
               status: false
               errorSchema: true
-              data: ErrorSchema
+              data: E
           }
         | {
               status: true
@@ -213,7 +220,7 @@ export class Endpoint<T, I, E> {
         | {
               status: true
               handled: true
-              data: ErrorSchema
+              data: E
           }
     > {
         const request = await nFetch(this.endpoint, this.getHeaders())
@@ -249,7 +256,7 @@ export class Endpoint<T, I, E> {
         | {
               status: true
               handled: true
-              data: ErrorSchema
+              data: E
           }
         | {
               status: true
@@ -258,15 +265,9 @@ export class Endpoint<T, I, E> {
         const data = this.schema.safeParse(json)
 
         if (!data.success) {
-            const errorSchema: z.ZodType<ErrorSchema> = z.object({
-                status: z.literal(false),
-                error: zodErrorSchema.or(z.string()),
-            })
-
-            const error = errorSchema.safeParse(json)
+            const error = this.errorSchema.safeParse(json)
 
             if (!error.success) {
-                console.log(error.error.errors)
                 return {
                     status: false,
                     handled: true,
@@ -276,7 +277,7 @@ export class Endpoint<T, I, E> {
                 return {
                     status: true,
                     handled: true,
-                    data: error.data,
+                    data: error.data as E,
                 }
             }
         } else {
