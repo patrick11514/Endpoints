@@ -24,22 +24,43 @@ export const zodErrorSchema = z.custom<'errorSchema'>((value) => {
 
     return true
 })
-export class Endpoint<T> {
+export class Endpoint<T, I = any> {
     endpoint: string
     method: EndpointMethod
     data: any
     schema: z.ZodType<T>
+    inputSchema: z.ZodType<I> | undefined
     headers: HeadersInit | undefined
 
-    constructor(endpoint: string, method: EndpointMethod, schema: z.ZodType<T>, headers?: HeadersInit) {
+    constructor(
+        endpoint: string,
+        method: EndpointMethod,
+        schema: z.ZodType<T>,
+        inputSchema?: z.ZodType<I>,
+        headers?: HeadersInit,
+    ) {
         this.endpoint = endpoint
         this.method = method
         this.schema = schema
+        this.inputSchema = inputSchema
         this.headers = headers
     }
 
-    async fetch(data?: any) {
-        this.data = data
+    async fetch(data?: I): Promise<T | ErrorSchema> {
+        if (this.inputSchema) {
+            const result = this.inputSchema.safeParse(data)
+
+            if (!result.success) {
+                return {
+                    status: false,
+                    error: result.error,
+                }
+            }
+
+            this.data = result.data
+        } else {
+            this.data = data
+        }
 
         return new Promise<T | ErrorSchema>(async (resolve, reject) => {
             const result = await this.executeFetch()
@@ -52,7 +73,7 @@ export class Endpoint<T> {
         })
     }
 
-    async fetchSafe(data?: any): Promise<
+    async fetchSafe(data?: I): Promise<
         | {
               status: false
               errorSchema: false
@@ -79,7 +100,22 @@ export class Endpoint<T> {
               data: T
           }
     > {
-        this.data = data
+        if (this.inputSchema) {
+            const result = this.inputSchema.safeParse(data)
+
+            if (!result.success) {
+                return {
+                    status: false,
+                    errorSchema: false,
+                    error: result.error,
+                }
+            }
+
+            this.data = result.data
+        } else {
+            this.data = data
+        }
+
         const request = await this.executeFetch()
 
         if (request.status === false) {
@@ -138,6 +174,8 @@ export class Endpoint<T> {
             default:
                 if (this.data['toString'] !== undefined) {
                     object['body'] = this.data.toString()
+                } else {
+                    throw new Error('Invalid data type')
                 }
         }
 

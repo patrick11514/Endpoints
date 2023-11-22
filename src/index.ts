@@ -10,9 +10,15 @@ const main = async () => {
         }),
     })
 
-    const endpoint = new Endpoint('http://localhost:5173/api/login', 'POST', schema)
+    const inputSchema = z.object({
+        id: z.number().min(1),
+    })
 
-    const result = await endpoint.fetchSafe(2)
+    const endpoint = new Endpoint('http://localhost:5173/api/login', 'POST', schema, inputSchema)
+
+    const result = await endpoint.fetchSafe({
+        id: 0,
+    })
 
     console.log(result)
 }
