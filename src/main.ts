@@ -24,25 +24,34 @@ export const zodErrorSchema = z.custom<'errorSchema'>((value) => {
 
     return true
 })
-export class Endpoint<T, I = any> {
+
+const test = z.object({
+    status: z.literal(false),
+    message: z.string(),
+})
+
+export class Endpoint<T, I, E> {
     endpoint: string
     method: EndpointMethod
     data: any
     schema: z.ZodType<T>
     inputSchema: z.ZodType<I> | undefined
+    errorSchema: z.ZodType<E> | typeof zodErrorSchema = zodErrorSchema
     headers: HeadersInit | undefined
 
     constructor(
         endpoint: string,
         method: EndpointMethod,
         schema: z.ZodType<T>,
-        inputSchema?: z.ZodType<I>,
         headers?: HeadersInit,
+        inputSchema?: z.ZodType<I>,
+        errorSchema?: z.ZodType<E>,
     ) {
         this.endpoint = endpoint
         this.method = method
         this.schema = schema
         this.inputSchema = inputSchema
+        this.errorSchema = errorSchema ? errorSchema : zodErrorSchema
         this.headers = headers
     }
 

@@ -4,7 +4,6 @@
     "description": "Create and send fetch requests to endpoints using type safety with Zod",
     "main": "lib/main.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "ts-node-dev --respawn ./src/index.ts",
         "build": "mkdir -p build && tsc",
         "start": "node ./build/index.js",

@@ -8,13 +8,14 @@ export type ErrorSchema = {
     error: string | z.ZodError<any>
 }
 
-export declare class Endpoint<T, I = any> {
+export declare class Endpoint<T, I, E> {
     constructor(
         endpoint: string,
         method: EndpointMethod,
         schema: z.ZodType<T>,
-        inputSchema?: z.ZodType<I>,
         headers?: HeadersInit,
+        inputSchema?: z.ZodType<I>,
+        errorSchema?: z.ZodType<E>,
     )
     fetch(data?: any): Promise<T | ErrorSchema>
     fetchSafe(data?: any): Promise<
