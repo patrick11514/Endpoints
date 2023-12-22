@@ -25,9 +25,9 @@ export declare class Endpoint<T, I, E> {
         inputSchema?: z.ZodType<I>
         errorSchema: z.ZodType<E>
     })
-    getSchema(): T
-    getInputSchema(): I
-    getErrorSchema(): E
+    getSchema(): z.ZodType<T>
+    getInputSchema(): z.ZodType<I>
+    getErrorSchema(): z.ZodType<E>
     fetch(data?: I): Promise<T | E | ErrorSchema>
     fetchSafe(data?: I): Promise<
         | {
