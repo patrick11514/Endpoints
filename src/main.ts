@@ -240,8 +240,8 @@ export class Endpoint<T, I, E> {
         let json: object
         let text = ''
         try {
-            text = await request.clone().text()
-            json = (await request.json()) as object
+            text = await request.text()
+            json = JSON.parse(text) as object
         } catch (e) {
             return {
                 status: false,
